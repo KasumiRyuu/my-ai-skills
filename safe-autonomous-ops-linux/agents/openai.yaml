@@ -1,0 +1,5 @@
+interface:
+  display_name: "Safe Autonomous Ops"
+  short_description: "Autonomous safe ops with rollback points"
+policy:
+  allow_implicit_invocation: false

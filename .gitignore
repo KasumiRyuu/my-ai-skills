@@ -1,0 +1,31 @@
+# Local rollback points
+.trash/
+
+# Local credentials and environment files
+.env
+.env.*
+!.env.example
+!.env.sample
+.ssh/
+*.pem
+*.key
+id_rsa
+id_ed25519
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Local editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.swp
+*~
