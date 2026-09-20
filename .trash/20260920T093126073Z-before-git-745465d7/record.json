@@ -1,0 +1,60 @@
+{
+  "Workspace": "E:\\CodexProjects\\my-ai-skills",
+  "Operation": "Initialize Git and publish to authorized private GitHub repository",
+  "OriginalGitRepository": false,
+  "NewPaths": [
+    ".git",
+    ".gitignore",
+    ".gitattributes",
+    "README.md"
+  ],
+  "BackupDirectory": "E:\\CodexProjects\\my-ai-skills\\.trash\\20260920T093126073Z-before-git-745465d7\\workspace-before-git",
+  "Files": [
+    {
+      "Path": "nature-style-plotting\\SKILL.md",
+      "Length": 6727,
+      "SHA256": "85AEE33E6A40560771F5ABBACD99FDA62391F398335966F680D607499D8DFA55"
+    },
+    {
+      "Path": "nature-style-plotting\\agents\\openai.yaml",
+      "Length": 236,
+      "SHA256": "69054B6ABE8543504B7C14DD7710F6BD112548C7E28B1C2DFD3BAFD14AA95E20"
+    },
+    {
+      "Path": "nature-style-plotting\\references\\matplotlib-recipes.md",
+      "Length": 13510,
+      "SHA256": "D52613984B04E21565CF010E349EF9C589074492EAADD0DADE6AB97395B2D73F"
+    },
+    {
+      "Path": "nature-style-plotting\\references\\nature-specifications.md",
+      "Length": 9099,
+      "SHA256": "74D3D4543DEDF958CF411BE1783A2BB887436E9BAC225868327E8A59E8DA3E1E"
+    },
+    {
+      "Path": "safe-autonomous-ops-linux\\SKILL.md",
+      "Length": 3732,
+      "SHA256": "01E1BA6EFC7078368D5C38BEC73A1CC192CB08A71D1DBCE5E1497D297DA0EC09"
+    },
+    {
+      "Path": "safe-autonomous-ops-linux\\agents\\openai.yaml",
+      "Length": 156,
+      "SHA256": "7E084C7C4980DE2137B60D134EDDDE460F13682DC79BBE2B53A3C10C5BFA8F51"
+    },
+    {
+      "Path": "safe-autonomous-ops-windows\\SKILL.md",
+      "Length": 19492,
+      "SHA256": "3D4381866C371FAA5219ED7E334EE82EDECE65379EE255614D60D597F9C12A7D"
+    },
+    {
+      "Path": "safe-autonomous-ops-windows\\agents\\openai.yaml",
+      "Length": 178,
+      "SHA256": "7695C47BB5BE83FA4B2F9CCBA7974F567A0F372E04FBCB06879B73989BFB6C4F"
+    },
+    {
+      "Path": "safe-autonomous-ops-windows\\references\\powershell-rollback.md",
+      "Length": 7752,
+      "SHA256": "E90540F01C31D90B3E303F59051AE986D23B7DA68C7B29055FE3A5482BB8F2FE"
+    }
+  ],
+  "Recovery": "Preserve current work first. This backup restores original project files; it does not remove a GitHub repository or undo a remote push."
+}

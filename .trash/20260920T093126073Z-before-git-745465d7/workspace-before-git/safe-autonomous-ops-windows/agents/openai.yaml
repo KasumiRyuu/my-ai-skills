@@ -1,0 +1,5 @@
+interface:
+  display_name: "Safe Autonomous Ops (Windows)"
+  short_description: "Safe Windows and SSH operations with rollback points"
+policy:
+  allow_implicit_invocation: false

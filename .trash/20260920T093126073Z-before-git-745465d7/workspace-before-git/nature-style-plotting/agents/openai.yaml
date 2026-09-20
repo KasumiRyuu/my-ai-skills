@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nature-Style Plotting"
+  short_description: "Create clean, publication-ready Nature-style figures"
+  default_prompt: "Use $nature-style-plotting to create a publication-ready scientific figure from my data."
