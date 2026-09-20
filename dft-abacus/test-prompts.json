@@ -1,0 +1,477 @@
+{
+  "skill": "dft-abacus",
+  "version": "0.2.1",
+  "source_version": "v3.10.1",
+  "source_commit": "f71921fe848659deac8db319cd4311b55b5ad480",
+  "purpose": "Behavioral review scenarios; presence of an expected answer is not proof that a model or ABACUS executed it. See test-results.md for actual validation.",
+  "test_cases": [
+    {
+      "id": "route-input",
+      "type": "routing",
+      "prompt": "我要用 ABACUS 写 INPUT/STRU/KPT，元素数和轨道文件怎么声明？",
+      "expected_behavior": "加载 inputs；ntype 可自动推断，显式值必须匹配；数据文件真实存在；KPT 自动生成是条件分支。"
+    },
+    {
+      "id": "route-accuracy",
+      "type": "routing",
+      "prompt": "ABACUS 的 ecutwfc 60 Ry、4×4×4 k 点够吗？",
+      "expected_behavior": "加载 accuracy；给目标量相关的收敛方案，不保证固定数值。"
+    },
+    {
+      "id": "route-static",
+      "type": "routing",
+      "prompt": "给定结构和赝势路径，只做 ABACUS 单点总能。",
+      "expected_behavior": "加载 static 和必要输入/精度内容；区分热自由能和基态问题。"
+    },
+    {
+      "id": "route-relax",
+      "type": "routing",
+      "prompt": "ABACUS relax 200 步还没达到力阈值怎么办？",
+      "expected_behavior": "加载 relax；检查电子/离子收敛、固定自由度、算法与单位，达到步数上限不是收敛。"
+    },
+    {
+      "id": "route-md",
+      "type": "routing",
+      "prompt": "给定结构，跑 ABACUS 300 K NVT。",
+      "expected_behavior": "加载 md；设置离子温控与步长，电子温度另外决定，检查时长与轨迹验收。"
+    },
+    {
+      "id": "route-electronic",
+      "type": "routing",
+      "prompt": "SCF 后算 ABACUS 能带和 DOS。",
+      "expected_behavior": "加载 electronic；区分路径与均匀网格；绑定 SCF 密度目录、文件名、自旋与采样，不能混用路径 DOS。"
+    },
+    {
+      "id": "route-convergence",
+      "type": "routing",
+      "prompt": "ABACUS DRHO 振荡，怎么调 mixing？",
+      "expected_behavior": "加载 convergence；先看占据、磁态、对角化和残差证据，不预设问题只能是混合。"
+    },
+    {
+      "id": "route-performance",
+      "type": "routing",
+      "prompt": "ABACUS 算得太慢，而且经常 OOM。",
+      "expected_behavior": "路由性能卡；按基组/求解器/硬件判断，不误认为必然 SCF 不收敛。"
+    },
+    {
+      "id": "route-short-parameter",
+      "type": "routing",
+      "prompt": "ABACUS scf_thr 的单位是什么？",
+      "expected_behavior": "直接说明 scf_thr_type 两种残差；无需索取结构或强行运行完整工作流。"
+    },
+    {
+      "id": "route-other-code",
+      "type": "routing",
+      "prompt": "VASP INCAR 里 ENCUT 怎么设？",
+      "expected_behavior": "不套用 ABACUS 参数/模板。"
+    },
+    {
+      "id": "missing-data",
+      "type": "boundary",
+      "prompt": "给我一个 ABACUS INPUT 骨架，没有具体结构。",
+      "expected_behavior": "可提供明确标注占位符的骨架，说明补齐什么；不声称可运行，不虚构体系。"
+    },
+    {
+      "id": "thermal-4000",
+      "type": "source_behavior",
+      "prompt": "物理电子温度 4000 K 的 SCF，包括电子熵，应如何设展宽？",
+      "expected_behavior": "fd；优先 sigma=0.0253345227426361 Ry（源码常数）；本版温度关键词约 8000 才等效，解释实现的半温度问题。"
+    },
+    {
+      "id": "thermal-literal",
+      "type": "source_behavior",
+      "prompt": "smearing_method fd 配 smearing_sigma_temp 4000 就是物理 4000 K 吗？",
+      "expected_behavior": "否，本版 sigma=0.01266726 Ry，FD 对应约 2000 K；需展示解析和占据调用链。"
+    },
+    {
+      "id": "thermal-order-a",
+      "type": "source_behavior",
+      "prompt": "INPUT 先 smearing_sigma 0.02，后 smearing_sigma_temp 4000，结果是什么？",
+      "expected_behavior": "有效 sigma=0.01266726 Ry；不同关键词后者覆盖同一变量。"
+    },
+    {
+      "id": "thermal-order-b",
+      "type": "source_behavior",
+      "prompt": "INPUT 先 smearing_sigma_temp 4000，后 smearing_sigma 0.02，结果是什么？",
+      "expected_behavior": "有效 sigma=0.02 Ry；不存在温度关键词永远优先。"
+    },
+    {
+      "id": "duplicate-key",
+      "type": "source_behavior",
+      "prompt": "INPUT 写两次 smearing_sigma 或两次 ecutwfc，会取最后值吗？",
+      "expected_behavior": "同名重复触发 has been read twice 错误；不要与不同别名写同一变量混淆。"
+    },
+    {
+      "id": "thermal-gaussian",
+      "type": "source_behavior",
+      "prompt": "物理电子温度 4000 K 可以用 gauss 或 mp 算真实电子熵吗？",
+      "expected_behavior": "物理 FD 占据选择 fd；数值展宽修正不能直接解释为 FD 熵。"
+    },
+    {
+      "id": "thermal-energy",
+      "type": "source_behavior",
+      "prompt": "FD 计算中 FINAL_ETOT_IS、E_entropy(-TS)、E_KS(sigma->0) 哪个是内能？",
+      "expected_behavior": "常规 KS etot 含 D=-TS；去除占据熵为 etot-D，显示外推量 etot-D/2 不能当内能或真实零温结果；thermal XC 另有模型边界。"
+    },
+    {
+      "id": "thermal-bands",
+      "type": "source_behavior",
+      "prompt": "4000 K 时 nbands 只比占据带多一条是否够？",
+      "expected_behavior": "不保证；检查高能端归一化占据和能量/熵随 nbands、k 点收敛，LCAO 受轨道维数限制。"
+    },
+    {
+      "id": "thermal-xc",
+      "type": "source_behavior",
+      "prompt": "PBE+FD 会自动启用有限温度 XC 吗？",
+      "expected_behavior": "不会；占据熵与热 XC 不同，xc_temperature 是独立参数且有泛函/库限制。"
+    },
+    {
+      "id": "thermal-md",
+      "type": "source_behavior",
+      "prompt": "MD 离子温度 300 K、电子温度 4000 K 怎么区分？",
+      "expected_behavior": "md_tfirst/md_tlast 控离子；fd sigma 控电子，说明本版 temp 关键词换算，不用离子温度替代电子温度。"
+    },
+    {
+      "id": "input-ntype",
+      "type": "source_behavior",
+      "prompt": "ntype 不写或与 STRU 不同会怎样？",
+      "expected_behavior": "默认 0 自动计数；非零且不符报错。"
+    },
+    {
+      "id": "input-line-length",
+      "type": "source_behavior",
+      "prompt": "INPUT 参数值会在 150 字符被截断吗？",
+      "expected_behavior": "参数值用 getline，不适用笼统150字符截断；标记前/跳过注释行另有 ignore(150)。"
+    },
+    {
+      "id": "input-check",
+      "type": "source_behavior",
+      "prompt": "abacus --check-input 成功，能证明整套赝势/KPT/SCF 正确吗？",
+      "expected_behavior": "不能；含参数读取/重置/检查和 STRU 物种统计，不完成一般初始化/SCF；部分重置有写文件副作用。"
+    },
+    {
+      "id": "input-output-snapshot",
+      "type": "source_behavior",
+      "prompt": "OUT.ABACUS/INPUT 只是初始默认值吗？",
+      "expected_behavior": "不是；get_final_value 写出解析/重置后参数，但不含全部后续运行重设和所有别名，结合日志。"
+    },
+    {
+      "id": "kpt-precedence",
+      "type": "source_behavior",
+      "prompt": "保留能带路径 KPT，同时设 gamma_only 或正 kspacing 会怎样？",
+      "expected_behavior": "自动网格会覆盖选定文件，路径计算需 gamma_only=0,kspacing=0；区分 PW gamma_only 重置与 LCAO 有效优化。"
+    },
+    {
+      "id": "cutoff-ratio",
+      "type": "source_behavior",
+      "prompt": "为了提速把 ecutrho 降到 3×ecutwfc 可以吗？",
+      "expected_behavior": "本版低于4的比值超出容差即报错，不推荐。"
+    },
+    {
+      "id": "out-chg-two",
+      "type": "source_behavior",
+      "prompt": "我要 out_chg 2 输出初始密度。",
+      "expected_behavior": "本版解析器拒绝2，不能照旧手册推荐；正常可重读 cube 用 out_chg 1 10。"
+    },
+    {
+      "id": "density-binary",
+      "type": "source_behavior",
+      "prompt": "out_chg 0 没有 cube，还可能有密度文件吗？读取新 cube 为什么没生效？",
+      "expected_behavior": "默认仍可能写 {suffix}-CHARGE-DENSITY.restart；读密度优先二进制再 cube；检查旧二进制遮蔽。"
+    },
+    {
+      "id": "nscf-init",
+      "type": "source_behavior",
+      "prompt": "NSCF 忘写 init_chg file 会从原子密度计算吗？",
+      "expected_behavior": "解析器强制设为file；仍必须有匹配可读密度，建议显式写便于审阅。"
+    },
+    {
+      "id": "dos-pdos",
+      "type": "source_behavior",
+      "prompt": "out_dos 1 和2在PW、多k LCAO、gamma-only LCAO完全一样吗？",
+      "expected_behavior": "不同；核对分支，多k LCAO PDOS 需2，实数gamma LCAO的1也可写PDOS，PW无普通原子轨道PDOS。投影输出需MPI，Gamma-only nspin2下自旋PDOS有能级索引缺陷。"
+    },
+    {
+      "id": "dos-cumulative",
+      "type": "source_behavior",
+      "prompt": "DOS1_smearing.dat 第三列可以直接作积分电子数吗？",
+      "expected_behavior": "不能；本版累计列缺能量步长因子，需结合具体格式自行积分/检查归一化。"
+    },
+    {
+      "id": "force-alias",
+      "type": "source_behavior",
+      "prompt": "force_thr 和 force_thr_ev 同时给是否后写优先？",
+      "expected_behavior": "不是；reset阶段 force_thr 优先，区别于smearing别名的输入顺序。"
+    },
+    {
+      "id": "relax-fire",
+      "type": "source_behavior",
+      "prompt": "relax_method fire 能启动FIRE吗？",
+      "expected_behavior": "不是合法relax_method；FIRE用calculation md与md_type fire，按MD初态要求设置。"
+    },
+    {
+      "id": "advanced-dftu",
+      "type": "source_behavior",
+      "prompt": "ABACUS 3.10.1 DFT+U只能LCAO吗？",
+      "expected_behavior": "不能一概而论；源码有受限PW nspin4+投影分支，按方法、基组和onsite配置核查。"
+    },
+    {
+      "id": "advanced-spinconstraint",
+      "type": "source_behavior",
+      "prompt": "直接开 sc_mag_switch 运行DeltaSpin约束？",
+      "expected_behavior": "本版参数检查会以不稳定功能终止，不能把手册描述当成可运行开关。"
+    },
+    {
+      "id": "advanced-soc-force",
+      "type": "source_behavior",
+      "prompt": "只要开SOC就都没有力和应力？",
+      "expected_behavior": "不作通用禁令，存在实现分支；按PW/LCAO、赝势、求解器及支持组合验证。"
+    },
+    {
+      "id": "parallel-bndpar",
+      "type": "source_behavior",
+      "prompt": "普通KSDFT设bndpar=4就能分能带加速吗？",
+      "expected_behavior": "此版非sdft会将其重设为1；按实际并行实现配置。"
+    },
+    {
+      "id": "ecosystem-labels",
+      "type": "boundary",
+      "prompt": "把4000K的SCF输出给dpdata做能量力训练标签。",
+      "expected_behavior": "核对FD温度、自由能/内能标签与力一致性、应力维里符号；外部版本解析器行为需另验证，不声称本次源码审核已经测试该软件。"
+    },
+    {
+      "id": "input-long-comment",
+      "type": "source_behavior",
+      "prompt": "INPUT 里很长的中文独占注释会被完整跳过吗？",
+      "expected_behavior": "参数值行无通用150限制，但独占注释用ignore(150)按字节跳过；保持简短或分行，不因UTF8字数少就认定安全。"
+    },
+    {
+      "id": "spin-zero-constraint",
+      "type": "source_behavior",
+      "prompt": "nspin 2 时省略 nupdown 和显式 nupdown 0 等价吗？",
+      "expected_behavior": "不等价；显式给0也开启双费米能约束，不能一律当作无约束。"
+    },
+    {
+      "id": "md-frequency",
+      "type": "source_behavior",
+      "prompt": "md_tfreq/md_pfreq 分别什么单位，默认多少？",
+      "expected_behavior": "两者均fs^-1；输入0时分别按1/(40*md_dt)与1/(400*md_dt)设置，不将pfreq写成kbar^-1。"
+    },
+    {
+      "id": "md-checkpoint",
+      "type": "source_behavior",
+      "prompt": "MD已完成100步，用外部目录重启，md_nstep 20 是再跑20步吗？",
+      "expected_behavior": "不是，md_nstep是目标累计步号；外部read_file_dir的Restart_md.dat与STRU_MD_<step>按实际路径规则成套，需检查最近checkpoint与去重。"
+    },
+    {
+      "id": "fire-threshold",
+      "type": "source_behavior",
+      "prompt": "calculation md、md_type fire，force_thr_ev设得很小就会更严吗？",
+      "expected_behavior": "本版FIRE构造又硬编码force_thr=1e-3 Ry/Bohr，实际判停不采用用户新阈值；说明限制并按指定精度选择可用优化路径。"
+    },
+    {
+      "id": "gamma-binary-restart",
+      "type": "source_behavior",
+      "prompt": "Gamma-only LCAO SCF只留下binary电荷，改gamma_only=0就能接能带吗？",
+      "expected_behavior": "不能保证且普通FP路径会因gamma标志true与电荷基组false不符而拒绝；缺cube时NSCF终止。先生成高精度cube或兼容的收敛密度；仅改suffix或后续out_chg不能修复初始化。"
+    },
+    {
+      "id": "wannier-unk",
+      "type": "source_behavior",
+      "prompt": "LCAO wannier_method 2设置out_wannier_unk=true却没有UNK，怎么办？",
+      "expected_behavior": "本版该out_unk函数为空；不能将缺失归因于忘开开关。核对PW/方法1的实现，nnkp完整k点一致，有效KPAR=1，外部版本另查。PW/方法1 UNK还受MPI构建、scalar完整性及PW mem_saver限制。"
+    },
+    {
+      "id": "stress-external-pressure",
+      "type": "source_behavior",
+      "prompt": "设置press1/2/3后，KS日志TOTAL-STRESS可以直接与MD_dump VIRIAL相等核验吗？",
+      "expected_behavior": "不能；普通PW/LCAO KS先打印后扣外压，MD_dump采用已扣外压返回值；单位kbar且不含离子动能，训练维里另按符号和体积换算。"
+    },
+    {
+      "id": "pw-u-output-stru",
+      "type": "source_behavior",
+      "prompt": "PW+U使用atomic波函数初始化，优化输出的STRU能直接续算吗？",
+      "expected_behavior": "需核对NUMERICAL_ORBITAL；读取onsite_radius>0需要轨道，但输出need_orb未覆盖所有该条件，按原物种顺序恢复已验证轨道段。"
+    },
+    {
+      "id": "md-random-restart",
+      "type": "source_behavior",
+      "prompt": "Langevin或Anderson续算是否与不中断轨迹逐位相同？",
+      "expected_behavior": "不能保证；检查点没有保存随机数生成器完整状态，区分统计等价和逐位连续。"
+    },
+    {
+      "id": "serial-lcao-lapack",
+      "type": "source_behavior",
+      "prompt": "串行普通 LCAO 默认 lapack 能做生产 SCF 吗？nbands=nlocal 能修好吗？",
+      "expected_behavior": "未回写本征向量，nbands<nlocal 还有越界；等于nlocal仅避开该容量问题，不修复psi。用经验证MPI后端或已修复实现，区分LR等其他lapack算法。"
+    },
+    {
+      "id": "lcao-double-grid",
+      "type": "source_behavior",
+      "prompt": "LCAO 把 ecutrho 从4倍提高到8倍就肯定更准吗？",
+      "expected_behavior": "本版双网格存在平滑vloc与稠密容器混用和越界；不要保证单调精度。常规NC LCAO先用单网格并同时收敛ecutwfc/轨道；需要稠密网格用验证实现。"
+    },
+    {
+      "id": "fft-ndz-reset",
+      "type": "source_behavior",
+      "prompt": "nx/ny/nz=32，ndx/ndy/ndz=32/32/64，ecutwfc=60、ecutrho=480是否保证加密z？",
+      "expected_behavior": "ndz重置误查ndy>ny，其他条件未打开double_grid时仍用小网格，初始化密度截断传240且有效范围再受网格约束；核对实际日志。"
+    },
+    {
+      "id": "numeric-prefix",
+      "type": "source_behavior",
+      "prompt": "scf_thr 1d-9、scf_nmax 1e2、ecutrho 4*60分别会怎样？",
+      "expected_behavior": "stod/stoi可能只取前缀，分别成1、1、4，后者还可被比值检查拒绝。浮点用e/E、整数普通十进制、算式先求值，不能假设所有非法后缀会报错。"
+    },
+    {
+      "id": "gamma-spin-pdos",
+      "type": "source_behavior",
+      "prompt": "Gamma-only nspin2 的PDOS下自旋峰位与DOS2不同，是dos_sigma没收敛吗？",
+      "expected_behavior": "本版PDOS/TDOS实数分支两通道均ekb(0,i)，下自旋能级错位。MPI构建+gamma_only0+显式Γ或规则网格+out_dos2避开索引缺陷，再验证谱；并非全部磁性DOS都错。"
+    },
+    {
+      "id": "non-mpi-projections",
+      "type": "source_behavior",
+      "prompt": "非MPI构建写出了全零PDOS/PBANDS，是否无轨道贡献？",
+      "expected_behavior": "投影/归约仅MPI分支，不能将文件存在或全零当物理结果；使用MPI构建，可1rank，另查串行LCAO求解缺陷；get_pchg非MPI明确拒绝。"
+    },
+    {
+      "id": "pw-wfc-charge-spin",
+      "type": "source_behavior",
+      "prompt": "nspin2的PW有本程序写出的WAVEFUNC.dat和istate.info，能init_chg wfc续算吗？",
+      "expected_behavior": "该密度reader每k三列，原生共线文件五列且合并k块，不兼容。优先已验证密度file；区分init_wfc file，不把同限制推广给它。"
+    },
+    {
+      "id": "pw-memory-postprocess",
+      "type": "source_behavior",
+      "prompt": "PW多k NSCF开mem_saver1同时out_wfc_pw、out_wfc_r、Wannier安全吗？",
+      "expected_behavior": "只存一k槽，求解后留最后态，后处理错配/丢失/非法访问；完整WFC任务用0。纯能级总DOS另存本征值，不因此直接失效。"
+    },
+    {
+      "id": "pw-partial-spin-pools",
+      "type": "source_behavior",
+      "prompt": "PW bands_to_print能配kpar4和nspin4吗？",
+      "expected_behavior": "多个池漏汇总，spinor只第一分量且小k数除零；采用经验证scalar1/2、实际KPAR1、完整波函数路径，GPU实际KPAR另查。"
+    },
+    {
+      "id": "partial-density-weights",
+      "type": "source_behavior",
+      "prompt": "空带部分电荷非零，且PW与LCAO逐k积分不同，是占据有问题吗？",
+      "expected_behavior": "不必然。PW只用wk/Omega及逐k通道权重和，无所选带占据；LCAO多k逐点1合并第一带wg，Gamma阈值前后取不同wg；按任务校准归一化。"
+    },
+    {
+      "id": "pw-realspace-norm",
+      "type": "source_behavior",
+      "prompt": "PW out_wfc_r输出的平方可以直接当电子数每Bohr3积分吗？",
+      "expected_behavior": "是原始逆FFT模平方，scalar未除Omega也未乘k/占据权重；自定义文本晶格标度Å，并非charge cube；spinor缺第二分量，无完整复相位。"
+    },
+    {
+      "id": "berry-spinor-pools",
+      "type": "source_behavior",
+      "prompt": "LCAO SOC绝缘体berry_phase得到数值能报告吗？PW kpar4能替代吗？",
+      "expected_behavior": "LCAO nspin4电子相位空实现，不能报告物理极化。PW需实际KPAR1、mem_saver0，公共ceil(nelec/2)占据数仍须核对，不能保证改PW即可靠。"
+    },
+    {
+      "id": "wannier-unk-mpi-spinor",
+      "type": "source_behavior",
+      "prompt": "PW或LCAO方法1开out_wannier_unk是否保证SOC和非MPI均有完整UNK？",
+      "expected_behavior": "writer仅MPI且nspin4只首分量；方法2为空。需求UNK用验证scalar MPI路径，别无条件禁掉其他mmn/amn/eig接口。"
+    },
+    {
+      "id": "fermi-bxsf",
+      "type": "source_behavior",
+      "prompt": "out_dos3的bxsf可以直接做自旋分辨费米面吗？",
+      "expected_behavior": "writer不完整：字面网格尺寸、ef Ry与能级eV混用、通道未筛选、仅MPI。需从完整规则网格和统一单位/通道经验证转换，不只改后缀。"
+    },
+    {
+      "id": "cube-integrity",
+      "type": "source_behavior",
+      "prompt": "cube读取成功是否证明数据没截断且晶胞一致？",
+      "expected_behavior": "不证明；reader不校验尾部fail/eof或几何，网格不同时可插值；独立核对数量、有限值、几何自旋积分及来源，严格NSCF仍保持兼容。"
+    },
+    {
+      "id": "mag-zero-autoset",
+      "type": "source_behavior",
+      "prompt": "全部初磁写零，noncolin=true时能保证零磁无偏初态吗？",
+      "expected_behavior": "abs(mag)<=1e-5且!lspinorb||noncolin触发自动值；nspin2设1、4设向量1,1,1及sqrt3但角度未改。全零无角度atomic非共线密度沿z；SOCtrue且noncolinfalse例外，不推断最终磁态。"
+    },
+    {
+      "id": "afm-geometry-restart",
+      "type": "source_behavior",
+      "prompt": "同元素AFM relax后拿STRU_ION_D或STRU_MD直接atomic重开能保留磁序吗？",
+      "expected_behavior": "默认out_mulfalse不写逐原子mag且类型默认已清零，重开可能触发同向初磁。恢复目标初值或适配磁化密度；PW拒绝out_mul，LCAO写分区值非原样初值。"
+    },
+    {
+      "id": "fire-frozen-force",
+      "type": "source_behavior",
+      "prompt": "FIRE固定底层，只有固定方向反作用力大，为何不停？",
+      "expected_behavior": "判停和混合都无移动分量投影，冻结力仍参加，且阈值硬编码；指定约束精度优先relax，不把全部归SCF。"
+    },
+    {
+      "id": "msst-frozen-velocity",
+      "type": "source_behavior",
+      "prompt": "MSST部分原子m000，是否已从动能和温度完全排除？",
+      "expected_behavior": "专用速度推进无mbl检查，受力产生非零冻结速度，仍进入动能/温度/动能应力；位置非仿射部分却屏蔽，不能宣称可靠固定边界。"
+    },
+    {
+      "id": "md-cell-constraints",
+      "type": "source_behavior",
+      "prompt": "NPT fixed_axes c能固定真空层，m000能让边界原子笛卡尔位置不变吗？",
+      "expected_behavior": "NPT/MSST不执行优化晶轴/ibrav约束，变胞还对所有原子仿射重算坐标；全fixed_atoms普通MD无可动原子报错。"
+    },
+    {
+      "id": "relax-label-timing",
+      "type": "source_behavior",
+      "prompt": "把每个STRU_IONi_D和同一步日志或JSON力能作训练样本，是否只有末步要排除？",
+      "expected_behavior": "每个实际位移步都可能是新几何配旧标签，JSON也一样。需追溯进入求解器几何或另做标签SCF；未移动收敛步例外，不机械平移局部步号。"
+    },
+    {
+      "id": "lr-groundstate-files",
+      "type": "source_behavior",
+      "prompt": "独立LR-TDDFT只有charge binary和binary WFC_NAO能启动吗？",
+      "expected_behavior": "LR直接读取所需spin cube和文本NAO WFC，不走普通KS binary优先路径。准备out_chg1高精度、out_wfc_lcao1兼容数据，结合LR构建缺陷。"
+    },
+    {
+      "id": "lr-spectrum-directory",
+      "type": "source_behavior",
+      "prompt": "lr_solver spectrum把read_file_dir改到旧任务就能读激发态吗？",
+      "expected_behavior": "基态依赖read_file_dir，但能量和rank分片振幅从当前global_out_dir读，保持维数/k点/并行布局；另检查assert/NDEBUG读写。"
+    },
+    {
+      "id": "lr-ndebug-io",
+      "type": "source_behavior",
+      "prompt": "LR激发态重启在定义NDEBUG的Release版与Debug版相同吗？",
+      "expected_behavior": "read/write_states将实际I/O置于assert表达式，NDEBUG直接去除调用；不能据正常退出保证重启已读写，用验证实现或同作业直接算谱。"
+    },
+    {
+      "id": "rt-mpi-time",
+      "type": "source_behavior",
+      "prompt": "不带MPI的RT-TDDFT能用td_force_dt控制电子传播步长吗？",
+      "expected_behavior": "传播主体在__MPI内，实际dt来自md_dt fs；td_force_dt只赋值未进入时间传播，不将普通AIMD步长默认套给电子动力学。"
+    },
+    {
+      "id": "precision-factory",
+      "type": "source_behavior",
+      "prompt": "所有LCAO和SDFT设precision single都变float并内存减半吗？",
+      "expected_behavior": "普通LCAO/SDFT求解器工厂仍double，PW KS和LCAO_IN_PW有float路径；CPU需float FFTW构建。以实际后端/误差/内存验证。"
+    },
+    {
+      "id": "pw-u-two-radius",
+      "type": "source_behavior",
+      "prompt": "PW dft_plus_u2和LCAO的方法2含义相同并自动onsite初始化吗？",
+      "expected_behavior": "PW按布尔启用onsite算符，不区分相同LCAO方法算法；2不自动补正onsite_radius，0会跳初始化。推荐有依据的1+正半径路线，不宣称所有显式正确radius的2必然失败。"
+    },
+    {
+      "id": "lr-debug-streams",
+      "type": "source_behavior",
+      "prompt": "LR Debug版没有assert失败，是否证明激发能和振幅文件读写成功？",
+      "expected_behavior": "不证明；helper不检查打开/fail/eof/写出状态，仅返回请求计数，文件缺失/截断/写失败也可过assert。独立核验文件及数据量、有限值、维数来源，Debug不是完整修复。"
+    },
+    {
+      "id": "lr-spectrum-energy-broadcast",
+      "type": "source_behavior",
+      "prompt": "定义未关assert、重启文件齐全，多MPI rank用lr_solver spectrum和abs_gauge velocity安全吗？",
+      "expected_behavior": "不安全；激发能只rank0读取未广播，其他rank ekb为零，velocity逐rank用其作分母再归约；同作业求解后直接出谱或验证修复实现。此除零机制不泛化到所有length/单rank情形。"
+    }
+  ]
+}
