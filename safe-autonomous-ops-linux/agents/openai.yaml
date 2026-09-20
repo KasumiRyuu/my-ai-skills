@@ -1,5 +1,5 @@
 interface:
-  display_name: "Safe Autonomous Ops"
-  short_description: "Autonomous safe ops with rollback points"
+  display_name: "Safe Autonomous Ops for Linux"
+  short_description: "Safe Linux and SSH operations with verified rollback points"
 policy:
   allow_implicit_invocation: false
