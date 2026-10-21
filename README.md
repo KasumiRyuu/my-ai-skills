@@ -11,6 +11,13 @@
 
 每项技能的入口为对应目录中的 `SKILL.md`；按需包含 `agents/` 界面元数据、`references/` 补充资料和 `templates/` 模板。
 
+## nature-style-plotting
+
+[入口中的质量门槛](nature-style-plotting/SKILL.md#质量门槛)覆盖数据处理披露、样本分布展示、
+面板尺度可比、最终尺寸可读、真实分辨率与矢量可编辑性，以及正式投稿合规的证据要求。
+[图件审计脚本](nature-style-plotting/scripts/figure_audit.py)提供机械检查，不能替代最终尺寸下的
+视觉检查或目标期刊合规核对。
+
 ## dft-abacus
 
 当前技能版本为 `0.2.1`，以 ABACUS `v3.10.1` 的源码实现为依据，包含 7 个任务子技能和 12 张能力卡。其他 ABACUS 版本或本地补丁需要重新核对相关实现。
