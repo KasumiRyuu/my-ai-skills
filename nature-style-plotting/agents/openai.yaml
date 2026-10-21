@@ -1,4 +1,4 @@
 interface:
-  display_name: "Scientific Figure Plotting"
+  display_name: "nature-style-plotting"
   short_description: "Create and audit publication-grade scientific figures"
   default_prompt: "Use $nature-style-plotting to create or revise a publication-grade scientific figure from my data."
