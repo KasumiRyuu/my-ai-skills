@@ -12,7 +12,7 @@
 - [颜色与可访问性](#颜色与可访问性)
 - [文件与可编辑性](#文件与可编辑性)
 - [Extended Data](#extended-data)
-- [本项目默认值如何映射](#本项目默认值如何映射)
+- [本 skill 通用基线如何映射](#本-skill-通用基线如何映射)
 - [核对清单](#核对清单)
 - [官方来源](#官方来源)
 
@@ -23,14 +23,14 @@
 1. 编辑针对当前稿件发来的直接要求。
 2. 目标 Nature Portfolio 期刊当前的 author/artwork instructions。
 3. Nature Research Figure Guide 的主图或 Extended Data 页面。
-4. 本 skill 的 Nature-inspired 视觉基线。
+4. 本 skill 的 `journal-inspired` 通用视觉基线。
 
 把两类任务分开：
 
 | 模式 | 目标 | 是否可称官方合规 |
 |---|---|---|
-| `nature-inspired` | 获得克制、紧凑、清晰的 Nature 风格科研图 | 否 |
-| `nature-submission` | 满足明确目标期刊和投稿阶段的技术要求 | 仅在逐项核对后 |
+| `journal-inspired` | 获得克制、紧凑、清晰的 Nature 风格科研图 | 否 |
+| `submission`（目标为 Nature Portfolio） | 满足明确目标期刊和投稿阶段的技术要求 | 仅在逐项核对后 |
 
 ## 主图基线
 
@@ -129,22 +129,22 @@ Extended Data 与印刷主图采用不同交付约束。当前官方页面给出
 不要把主图的矢量交付规则机械套到 Extended Data，也不要把 Extended Data 的 JPEG 规则
 反向套到主图。
 
-## 本项目默认值如何映射
+## 本 skill 通用基线如何映射
 
-当前项目已有基线与 Nature 官方要求的关系如下：
+通用科研绘图默认值不是 Nature 正式规范；进入以 Nature Portfolio 为目标的 `submission`
+模式时按下表覆盖：
 
-| 项目现有设置 | 处理方式 |
+| 通用设置 | Nature 正式投稿处理 |
 |---|---|
-| 89 / 136 / 183 mm | 保留；严格模式优先 89 或 183 mm |
-| 普通文字 6.5 pt | 保留，位于官方 5--7 pt 范围内 |
-| 刻度与图例 5.5 pt | 保留，但在最终尺寸下目视检查 |
-| 面板标签 8 pt 粗体正体 | 保留 |
-| 轴框 0.35 pt、次刻度 0.25 pt | 保留，位于官方 0.25--1 pt 范围内 |
-| 四边向内主次刻度、无网格 | 作为本 skill 的默认视觉系统保留 |
-| PingFang SC | 中文 Nature-inspired 图保留；严格英文投稿改用 Arial/Helvetica |
-| `物理量 / unit` | Nature-inspired 可保留；严格模式改为 `Quantity (unit)` |
-| 项目蓝 `#3161AF` 与红 `#CF3946` | 可作延续色；严格可访问性优先官方示例色板 |
-| PDF + SVG + 600 dpi PNG | 保留为工作产物；正式交付按主图或 Extended Data 规则筛选 |
+| 常用宽度 89 / 136 / 183 mm | 优先按当前官方版面采用 89 或 183 mm；136 mm 仅在目标页面允许且内容需要时使用 |
+| 普通文字 7 pt、刻度与图例 6.2 pt | 保留在 5--7 pt 范围内，并在最终尺寸目视检查 |
+| 通用面板标签 8.5 pt | 覆盖为当前指南要求的 8 pt 粗体正体 |
+| 轴框 0.45 pt、次刻度 0.30 pt、主线约 0.8 pt | 保留在 0.25--1 pt 范围内，并检查缩放后线宽 |
+| 开放轴或四边框按图型选择 | Nature 并不要求所有图使用同一种框架；以内容可读性和整篇一致性为准 |
+| 中文工作图使用 PingFang SC | 英文正式投稿改用目标期刊认可的 Arial/Helvetica 等标准无衬线字体 |
+| 中文可使用 `物理量 / unit` | 严格英文模式改为 `Quantity (unit)` |
+| 色觉友好离散色板 | 可保留，但仍检查对比度、灰度和目标期刊色彩要求 |
+| PDF + SVG + 高分辨率 PNG 工作产物 | 正式交付按主图或 Extended Data 的当前格式要求筛选 |
 
 ## 核对清单
 

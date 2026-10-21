@@ -1,8 +1,9 @@
-# Nature 风格 Matplotlib 配方
+# 投稿级科研图 Matplotlib 配方
 
-本文件把当前项目的 `plot_template.py`、6.5 pt 独立图库、公式与对数坐标专项，以及
-`data-analysis-plotting` 的稳定做法压缩成可迁移配方。按图型读取相关章节，不要机械复制
-全部代码。
+本文件提供投稿级数据图的可迁移实现配方。优先复用 `../scripts/scientific_style.py` 中的毫米
+尺寸、可访问色板、轴样式、面板标签和同源导出助手；只覆盖当前图型所需的默认值，不要机械
+复制全部代码。相图、谱图、结构图、地图和示意图的科学语法见
+[figure-type-recipes.md](figure-type-recipes.md)。
 
 ## 目录
 
@@ -62,52 +63,49 @@ parse arguments
 
 ### 字体选择
 
-- 严格英文投稿：依次查找 Arial、Helvetica；缺失时报告实际回退字体，不要静默声称合规。
-- 中文 Nature-inspired：从 `~/.local/share/fonts/PingFangSC` 注册 PingFang SC，再依次回退
+- 英文投稿：先服从目标期刊要求；Arial、Helvetica 或兼容无衬线字体是常见起点。缺失时报告
+  实际回退字体，不要静默声称合规。
+- 中文工作图：从 `~/.local/share/fonts/PingFangSC` 注册 PingFang SC，再依次回退
   到 Source Han Sans CN、Noto Sans CJK SC、DejaVu Sans。
 - 多面板整篇使用同一字体族。避免某些面板由 MathText、LaTeX 或后处理软件偷偷换字体。
 - 不要默认启用 `text.usetex=True`；它可能引入字体替换、Type 3 字体或不可编辑文本。
 
-项目默认参数：
+通用起点与 `scripts/scientific_style.py` 保持一致：
 
 ```python
 plt.rcParams.update({
     "font.family": selected_font,
-    "font.size": 6.5,
-    "font.weight": 400,
-    "axes.labelsize": 6.5,
-    "axes.labelweight": 400,
-    "axes.titlesize": 6.5,
-    "xtick.labelsize": 5.5,
-    "ytick.labelsize": 5.5,
-    "legend.fontsize": 5.5,
+    "font.size": 7.0,
+    "axes.labelsize": 7.0,
+    "axes.titlesize": 7.0,
+    "xtick.labelsize": 6.2,
+    "ytick.labelsize": 6.2,
+    "legend.fontsize": 6.2,
     "text.color": "0.08",
     "axes.unicode_minus": False,
     "axes.grid": False,
     "axes.facecolor": "white",
     "figure.facecolor": "white",
-    "axes.edgecolor": "0.25",
+    "axes.edgecolor": "0.22",
     "axes.labelcolor": "0.08",
-    "axes.linewidth": 0.35,
-    "xtick.direction": "in",
-    "ytick.direction": "in",
-    "xtick.minor.visible": True,
-    "ytick.minor.visible": True,
-    "xtick.major.width": 0.35,
-    "ytick.major.width": 0.35,
-    "xtick.minor.width": 0.25,
-    "ytick.minor.width": 0.25,
-    "xtick.major.size": 2.2,
-    "ytick.major.size": 2.2,
-    "xtick.minor.size": 1.2,
-    "ytick.minor.size": 1.2,
-    "axes.labelpad": 2.0,
+    "axes.linewidth": 0.45,
+    "xtick.direction": "out",       # physics profile 在逐轴样式中改为 in
+    "ytick.direction": "out",
+    "xtick.major.width": 0.45,
+    "ytick.major.width": 0.45,
+    "xtick.minor.width": 0.30,
+    "ytick.minor.width": 0.30,
+    "xtick.major.size": 2.6,
+    "ytick.major.size": 2.6,
+    "xtick.minor.size": 1.4,
+    "ytick.minor.size": 1.4,
+    "axes.labelpad": 2.5,
     "xtick.major.pad": 2.0,
     "ytick.major.pad": 2.0,
     "legend.frameon": False,
-    "lines.linewidth": 0.75,
-    "lines.markersize": 3.0,
-    "patch.linewidth": 0.35,
+    "lines.linewidth": 0.8,
+    "lines.markersize": 3.2,
+    "patch.linewidth": 0.45,
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
     "svg.fonttype": "none",
@@ -116,9 +114,9 @@ plt.rcParams.update({
 })
 ```
 
-中文公式图需要显式配置 MathText 变体时，可延续当前项目的 PingFang SC 自定义设置；严格
-英文投稿则优先让数学符号和正文标准无衬线字体协调，并实际检查导出的 PDF 字体。不要仅凭
-`rcParams` 推断最终嵌入结果。
+中文公式图需要显式配置 MathText 变体时，可延续当前项目的 PingFang SC 自定义设置；英文
+投稿则让数学符号和正文标准无衬线字体协调，并实际检查导出的 PDF 字体。不要仅凭 `rcParams`
+推断最终嵌入结果。
 
 ## 尺寸与布局
 
@@ -152,52 +150,40 @@ fig, ax = plt.subplots(
 
 ## 坐标轴与面板标签
 
-普通直角坐标轴使用统一函数：
+轴样式应服从图型，而不是强行统一：
 
 ```python
-def style_axis(ax: plt.Axes, panel_label: str = "") -> None:
-    for spine in ax.spines.values():
-        spine.set_visible(True)
-        spine.set_color("0.25")
-        spine.set_linewidth(0.35)
+from scripts.scientific_style import panel_label, style_axis
 
-    ax.grid(False)
-    ax.minorticks_on()
-    ax.tick_params(
-        axis="both", which="major", direction="in", top=True, right=True,
-        length=2.2, width=0.35, pad=2.0, labelsize=5.5, colors="0.10",
-    )
-    ax.tick_params(
-        axis="both", which="minor", direction="in", top=True, right=True,
-        length=1.2, width=0.25, colors="0.10",
-    )
+# 通用统计图、地学剖面：左/下开放轴，刻度向外
+style_axis(ax, frame="open", minor=True)
 
-    if panel_label:
-        ax.text(
-            -0.075, 1.025, panel_label,
-            transform=ax.transAxes,
-            fontsize=8.0, fontweight=600, fontstyle="normal",
-            ha="right", va="bottom", color="black", clip_on=False,
-        )
+# PRL/PRB 风格谱图、能带、紧凑物理图：四边框，刻度向内
+style_axis(ax, frame="boxed", minor=True)
+
+panel_label(ax, "a")
 ```
+
+普通图默认关闭网格；当精确读数确实重要时，可开启极淡主网格。分类轴、图像坐标、热图单元
+边界和极坐标不要机械启用次刻度。
 
 使用原则：
 
-- 严格模式用 `Energy (eV)`；Nature-inspired 中文图可按项目传统用 `能量 / eV`。
+- 英文投稿图优先用 `Energy (eV)`；中文工作图可按项目传统用 `能量 / eV`。
 - 对共享 x 或 y 的多面板只在外侧保留轴标签，避免重复信息。
 - 在同一物理量的比较面板中共享范围、刻度和色标。
 - 用固定的科学含义决定范围；不要用裁切放大差异而不说明。
-- 仅在能提高解释力时显示次刻度。分类轴、热图单元边界和极坐标不必机械调用
-  `minorticks_on()`。
+- 物理学谱图可使用四边框和向内刻度；地学剖面、统计图和示意坐标可使用开放轴。整张图保持
+  一致，但不要跨图型追求僵硬统一。
 - 面板标签放在一致位置并按阅读顺序排列。标签在 Axes 外时设置 `clip_on=False`，并检查
   自动布局是否留出空间。
 
 ## 颜色与编码
 
-默认离散色板使用官方示例色：
+通用离散色板可从以下色觉友好颜色开始；正式投稿仍需核对目标期刊要求：
 
 ```python
-NATURE_ACCESSIBLE = {
+ACCESSIBLE_COLORS = {
     "black": "#000000",
     "orange": "#E69F00",
     "sky_blue": "#56B4E9",
@@ -264,7 +250,7 @@ NATURE_ACCESSIBLE = {
 - 根据内容决定 GridSpec 比例，不强迫所有面板同宽同高。
 - 将公共图例放在不遮挡数据的位置，避免每个面板重复相同图例。
 - 只在 inset 提供不同尺度、局部放大或补充物理关系时使用 inset；不要复制主图信息。
-- inset 中的文字仍不得低于严格模式 5 pt。
+- inset 中的文字仍须满足目标期刊在最终尺寸下的最小字号。
 
 ## 能带、声子谱与对数轴
 

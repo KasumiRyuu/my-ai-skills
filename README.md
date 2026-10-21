@@ -6,7 +6,7 @@
 | --- | --- |
 | [safe-autonomous-ops-windows](safe-autonomous-ops-windows/SKILL.md) | Windows 本机与 SSH 远程 Linux 工作区的安全操作规范，包含路径检查、备份和恢复流程。 |
 | [safe-autonomous-ops-linux](safe-autonomous-ops-linux/SKILL.md) | Linux/POSIX 本机与 SSH 远端工作区的安全操作规范，包含远程连接、文件传输、回滚和恢复约束。 |
-| [nature-style-plotting](nature-style-plotting/SKILL.md) | 使用 Matplotlib 创建、修改和审查 Nature 风格科研图。 |
+| [nature-style-plotting](nature-style-plotting/SKILL.md) | 基于本地文献语料创建、修改和审查投稿级数据图、相图、谱图、示意图及复合科研图。 |
 | [dft-abacus](dft-abacus/SKILL.md) | 依据 ABACUS v3.10.1 源码准备、审核和排查 DFT 计算，覆盖输入、精度、SCF、电子温度与熵、结构优化、AIMD、电子结构、磁性及性能。 |
 
 每项技能的入口为对应目录中的 `SKILL.md`；按需包含 `agents/` 界面元数据、`references/` 补充资料和 `templates/` 模板。
